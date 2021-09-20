@@ -197,7 +197,7 @@ class Utils {
                     core.getInput(Utils.PROMOTE_TO_REPO),
                     "--project=" + core.getInput(Utils.JFROF_PROJECT),
                     "--source-repo=" + core.getInput(Utils.PROMOTE_SOURCE_REPO),
-                    "--copy=true"
+                    "--copy=true",
                 ];
                 res = yield (0, exec_1.exec)("jfrog", args);
             }
