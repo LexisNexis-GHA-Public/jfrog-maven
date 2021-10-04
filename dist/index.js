@@ -201,6 +201,18 @@ class Utils {
                 ];
                 res = yield (0, exec_1.exec)("jfrog", args);
             }
+            if (core.getInput(Utils.BUILD_TYPE) == "promote-docker") {
+                args = [
+                    "rt",
+                    "dpr",
+                    "--copy",
+                    "--source-tag=" + core.getInput(Utils.DOCKER_IMAGE_TAG),
+                    core.getInput(Utils.DOCKER_IMAGE),
+                    core.getInput(Utils.PROMOTE_SOURCE_REPO),
+                    core.getInput(Utils.PROMOTE_TO_REPO),
+                ];
+                res = yield (0, exec_1.exec)("jfrog", args);
+            }
             if (res !== core.ExitCode.Success) {
                 throw new Error("JFrog CLI exited with exit code " + res);
             }
@@ -2000,7 +2012,7 @@ function copyFile(srcFile, destFile, force) {
 /***/ 306:
 /***/ ((module) => {
 
-module.exports = {"i8":"1.0.0"};
+module.exports = {"i8":"1.1.0"};
 
 /***/ }),
 
