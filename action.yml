@@ -7,10 +7,10 @@ inputs:
     required: false
   build-name:
     description: "build name"
-    required: true
+    required: false
   build-number:
     description: "Build Number"
-    required: true
+    required: false
   build-type:
     description: "action to be taken"
     required: true

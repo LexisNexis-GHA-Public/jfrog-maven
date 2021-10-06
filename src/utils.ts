@@ -159,6 +159,18 @@ export class Utils {
       ];
       res = await exec("jfrog", args);
     }
+    if (core.getInput(Utils.BUILD_TYPE) == "promote-docker") {
+      args = [
+        "rt",
+        "dpr",
+        "--copy",
+        "--source-tag=" + core.getInput(Utils.DOCKER_IMAGE_TAG),
+        core.getInput(Utils.DOCKER_IMAGE),
+        core.getInput(Utils.PROMOTE_SOURCE_REPO),
+        core.getInput(Utils.PROMOTE_TO_REPO),
+      ];
+      res = await exec("jfrog", args);
+    }
     if (res !== core.ExitCode.Success) {
       throw new Error("JFrog CLI exited with exit code " + res);
     }
