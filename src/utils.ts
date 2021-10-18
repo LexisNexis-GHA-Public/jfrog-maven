@@ -23,7 +23,7 @@ export class Utils {
     "resolve-releases-repository";
   public static readonly DEPLOY_RELEASE_REPO: string =
     "deploy-releases-repository";
-  public static readonly JFROF_PROJECT: string = "jfrog-project";
+  public static readonly JFROG_PROJECT: string = "jfrog-project";
   public static readonly DOCKER_IMAGE: string = "docker-image";
   public static readonly DOCKER_IMAGE_TAG: string = "docker-image-tag";
   public static readonly DOCKER_REPO: string = "docker-repo";
@@ -48,7 +48,7 @@ export class Utils {
     if (buildNumberEnv) {
       core.exportVariable("JFROG_CLI_BUILD_NUMBER", buildNumberEnv);
     }
-    let buildProjectEnv: string = core.getInput(Utils.JFROF_PROJECT);
+    let buildProjectEnv: string = core.getInput(Utils.JFROG_PROJECT);
     if (buildProjectEnv) {
       core.exportVariable("JFROG_CLI_BUILD_PROJECT", buildProjectEnv);
     }
@@ -153,7 +153,7 @@ export class Utils {
         core.getInput(Utils.PROMOTE_BUILD_NAME),
         core.getInput(Utils.PROMOTE_BUILD_NUMBER),
         core.getInput(Utils.PROMOTE_TO_REPO),
-        "--project=" + core.getInput(Utils.JFROF_PROJECT),
+        "--project=" + core.getInput(Utils.JFROG_PROJECT),
         "--source-repo=" + core.getInput(Utils.PROMOTE_SOURCE_REPO),
         "--copy=true",
       ];
