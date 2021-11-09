@@ -1,116 +1,70 @@
-# Create a JavaScript Action
+## Setting up Jfrogcli in CI process:
+We can use existing GitHub action from Jfrog to install Jfrogcli in the CI process.
+as part of using the jfrogcli action we need to provide the JF_ARTIFACTORY secret. 
+Follow the below steps to create the JF_ARTIFACTORY secret and save as part GitHub secrets.
+  1.	Make sure JFrog CLI version 1.29.0 or above is installed on your local machine by running jfrog -v.
+  2.	Configure the details of the Artifactory server by running jfrog c add.
+  3.	Export the details of the Artifactory server you configured, using the server ID you chose. Do this by running jfrog c export <SERVER ID>.
+  4.	Copy the generated token to the clipboard and save it as a secret on GitHub.
+  
+  ![image](https://user-images.githubusercontent.com/31221465/140869714-d93af146-943a-4be4-88b3-b936ed8accda.png)
 
-<p align="center">
-  <a href="https://github.com/actions/javascript-action/actions"><img alt="javscript-action status" src="https://github.com/actions/javascript-action/workflows/units-test/badge.svg"></a>
-</p>
+Once the secret is saved, we can use the jfrogcli action as below.
+  
+  ![image](https://user-images.githubusercontent.com/31221465/140869758-5c21b69b-0ed9-4cfd-8979-1254c503604f.png)
 
-Use this template to bootstrap the creation of a JavaScript action.:rocket:
 
-This template includes tests, linting, a validation workflow, publishing, and versioning guidance.
+## Jfrog push action Usage:
+Action supports following 
+# Action Input:
+|name|description|
+|--------|----------|
+|version|Version of Jfrogcli|
+|build-name|name of the build|
+|build-number|build number|
+|build-type|build type of the build|
+|resolve-server-id|serverId for resolving the maven dependency|
+|deploy-server-id|serverId for deploying  the maven artifacts|
+|resolve-snapshot-repository|repository for resolving the maven snapshot dependency|
+|deploy-snapshot-repository|repository for deploying the maven snapshot artifacts|
+|resolve-releases-repository|repository for resolving the maven release dependency|
+|deploy-releases-repository|repository for deploying the maven release artifacts|
+|jfrog-project|Jfrog project where the artifacts are uploaded|
+|docker-repo|Jfrog docker repository|
+|docker-image|image name|
+|docker-image-tag|image tag|
+|build-fail-onscan|if true job is failed if the xray scan has vulnerabilities|
+|helm-repo|Jfrog helm repository|
 
-If you are new, there's also a simpler introduction.  See the [Hello World JavaScript Action](https://github.com/actions/hello-world-javascript-action)
 
-## Create an action from this template
+1.	maven-build
+with input build-type as maven-build, action creates jfrog maven config and builds the maven artifacts, but artifacts are not published to Jfrog.
+Usage:
 
-Click the `Use this Template` and provide the new repo details for your action
+ ![image](https://user-images.githubusercontent.com/31221465/140873613-14dce430-c53a-4c5b-affc-6843ac91f8ca.png)
 
-## Code in Main
 
-Install the dependencies
 
-```bash
-npm install
-```
 
-Run the tests :heavy_check_mark:
+2.	maven-deploy
+with input build-type as maven-deploy, action creates jfrog maven config and builds the maven artifacts, once the maven artifacts are built, collects environment variables for the build, publishes artifacts along with build info to Jfrog along with Jfrog xray scan is triggered.
+Usage
 
-```bash
-$ npm test
+ ![image](https://user-images.githubusercontent.com/31221465/140873648-b4d8e61e-2309-46ef-9053-3ebbfa03f9fe.png)
 
- PASS  ./index.test.js
-  ✓ throws invalid number (3ms)
-  ✓ wait 500 ms (504ms)
-  ✓ test runs (95ms)
-...
-```
 
-## Change action.yml
+3.	docker-build
+with input build-type as docker-build, action collects environment variables for the build, publishes image along with build info to Jfrog along with Jfrog xray scan is triggered.
 
-The action.yml defines the inputs and output for your action.
+Usage
 
-Update the action.yml with your name, description, inputs and outputs for your action.
+  ![image](https://user-images.githubusercontent.com/31221465/140873674-890398f4-be52-46e9-bc6a-5fa13688889f.png)
 
-See the [documentation](https://help.github.com/en/articles/metadata-syntax-for-github-actions)
 
-## Change the Code
+4.	helm-build
+with input build-type as helm-build, action collects environment variables for the build, publishes helm package along with build info along with Jfrog xray scan is triggered.
 
-Most toolkit and CI/CD operations involve async operations so the action is run in an async function.
+Usage
 
-```javascript
-const core = require('@actions/core');
-...
+  ![image](https://user-images.githubusercontent.com/31221465/140873709-2e3b69a6-be71-4e92-b8d6-b4100b61c388.png)
 
-async function run() {
-  try {
-      ...
-  }
-  catch (error) {
-    core.setFailed(error.message);
-  }
-}
-
-run()
-```
-
-See the [toolkit documentation](https://github.com/actions/toolkit/blob/master/README.md#packages) for the various packages.
-
-## Package for distribution
-
-GitHub Actions will run the entry point from the action.yml. Packaging assembles the code into one file that can be checked in to Git, enabling fast and reliable execution and preventing the need to check in node_modules.
-
-Actions are run from GitHub repos.  Packaging the action will create a packaged action in the dist folder.
-
-Run prepare
-
-```bash
-npm run prepare
-```
-
-Since the packaged index.js is run from the dist folder.
-
-```bash
-git add dist
-```
-
-## Create a release branch
-
-Users shouldn't consume the action from master since that would be latest code and actions can break compatibility between major versions.
-
-Checkin to the v1 release branch
-
-```bash
-git checkout -b v1
-git commit -a -m "v1 release"
-```
-
-```bash
-git push origin v1
-```
-
-Note: We recommend using the `--license` option for ncc, which will create a license file for all of the production node modules used in your project.
-
-Your action is now published! :rocket:
-
-See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
-
-## Usage
-
-You can now consume the action by referencing the v1 branch
-
-```yaml
-uses: actions/javascript-action@v1
-with:
-  milliseconds: 1000
-```
-
-See the [actions tab](https://github.com/actions/javascript-action/actions) for runs of this action! :rocket:
