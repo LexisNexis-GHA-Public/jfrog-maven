@@ -30,11 +30,7 @@ Action supports following
 |resolve-releases-repository|repository for resolving the maven release dependency|
 |deploy-releases-repository|repository for deploying the maven release artifacts|
 |jfrog-project|Jfrog project where the artifacts are uploaded|
-|docker-repo|Jfrog docker repository|
-|docker-image|image name|
-|docker-image-tag|image tag|
 |build-fail-onscan|if true job is failed if the xray scan has vulnerabilities|
-|helm-repo|Jfrog helm repository|
 
 
 1.	maven-build
@@ -51,20 +47,3 @@ with input build-type as maven-deploy, action creates jfrog maven config and bui
 Usage
 
  ![image](https://user-images.githubusercontent.com/31221465/140873648-b4d8e61e-2309-46ef-9053-3ebbfa03f9fe.png)
-
-
-3.	docker-build
-with input build-type as docker-build, action collects environment variables for the build, publishes image along with build info to Jfrog along with Jfrog xray scan is triggered.
-
-Usage
-
-  ![image](https://user-images.githubusercontent.com/31221465/140873674-890398f4-be52-46e9-bc6a-5fa13688889f.png)
-
-
-4.	helm-build
-with input build-type as helm-build, action collects environment variables for the build, publishes helm package along with build info along with Jfrog xray scan is triggered.
-
-Usage
-
-  ![image](https://user-images.githubusercontent.com/31221465/140873709-2e3b69a6-be71-4e92-b8d6-b4100b61c388.png)
-
