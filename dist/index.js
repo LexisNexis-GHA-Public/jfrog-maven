@@ -2,7 +2,14 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 109:
+/***/ 306:
+/***/ ((module) => {
+
+module.exports = {"i8":"1.0.0"};
+
+/***/ }),
+
+/***/ 739:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
@@ -35,8 +42,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core = __importStar(__nccwpck_require__(186));
-const utils_1 = __nccwpck_require__(918);
+const core = __importStar(__nccwpck_require__(24));
+const utils_1 = __nccwpck_require__(760);
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -57,7 +64,7 @@ main();
 
 /***/ }),
 
-/***/ 918:
+/***/ 760:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
@@ -91,8 +98,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Utils = void 0;
-const core = __importStar(__nccwpck_require__(186));
-const exec_1 = __nccwpck_require__(514);
+const core = __importStar(__nccwpck_require__(24));
+const exec_1 = __nccwpck_require__(423);
 class Utils {
     static setCliEnv() {
         core.exportVariable("JFROG_CLI_ENV_EXCLUDE", "*password*;*secret*;*key*;*token*;JF_ARTIFACTORY_*");
@@ -105,7 +112,7 @@ class Utils {
         if (buildNumberEnv) {
             core.exportVariable("JFROG_CLI_BUILD_NUMBER", buildNumberEnv);
         }
-        let buildProjectEnv = core.getInput(Utils.JFROF_PROJECT);
+        let buildProjectEnv = core.getInput(Utils.JFROG_PROJECT);
         if (buildProjectEnv) {
             core.exportVariable("JFROG_CLI_BUILD_PROJECT", buildProjectEnv);
         }
@@ -120,37 +127,19 @@ class Utils {
         return __awaiter(this, void 0, void 0, function* () {
             let res = 0;
             let args = [];
-            if (core.getInput(Utils.BUILD_TYPE) == "maven-build") {
-                args = [
-                    "rt",
-                    "mvnc",
-                    "--server-id-resolve=" + core.getInput(Utils.RESOLVE_SERVER_ID),
-                    "--repo-resolve-releases=" + core.getInput(Utils.RESOLVE_RELEASE_REPO),
-                    "--repo-resolve-snapshots=" +
-                        core.getInput(Utils.RESOLVE_SNAPSHOT_REPO),
-                ];
-                res = yield (0, exec_1.exec)("jfrog", args);
-                args = ["rt", "mvn", "clean", "install"];
-                res = yield (0, exec_1.exec)("jfrog", args);
-            }
-            if (core.getInput(Utils.BUILD_TYPE) == "maven-deploy") {
-                args = [
-                    "rt",
-                    "mvnc",
-                    "--server-id-resolve=" + core.getInput(Utils.RESOLVE_SERVER_ID),
-                    "--server-id-deploy=" + core.getInput(Utils.DEPLOY_SERVER_ID),
-                    "--repo-resolve-releases=" + core.getInput(Utils.RESOLVE_RELEASE_REPO),
-                    "--repo-resolve-snapshots=" +
-                        core.getInput(Utils.RESOLVE_SNAPSHOT_REPO),
-                    "--repo-deploy-releases=" + core.getInput(Utils.DEPLOY_RELEASE_REPO),
-                    "--repo-deploy-snapshots=" + core.getInput(Utils.DEPLOY_SNAPSHOT_REPO),
-                ];
-                res = yield (0, exec_1.exec)("jfrog", args);
-                args = ["rt", "mvn", "clean", "install"];
-                res = yield (0, exec_1.exec)("jfrog", args);
+            if (core.getInput(Utils.BUILD_TYPE) == "docker-deploy") {
                 args = ["rt", "build-collect-env"];
                 res = yield (0, exec_1.exec)("jfrog", args);
                 args = ["rt", "build-add-git"];
+                res = yield (0, exec_1.exec)("jfrog", args);
+                args = [
+                    "rt",
+                    "docker-push",
+                    core.getInput(Utils.DOCKER_IMAGE) +
+                        ":" +
+                        core.getInput(Utils.DOCKER_IMAGE_TAG),
+                    core.getInput(Utils.DOCKER_REPO),
+                ];
                 res = yield (0, exec_1.exec)("jfrog", args);
                 args = ["rt", "build-publish"];
                 res = yield (0, exec_1.exec)("jfrog", args);
@@ -158,6 +147,18 @@ class Utils {
                     "rt",
                     "build-scan",
                     "--fail=" + core.getInput(Utils.BUILD_FAIL_ONSCAN),
+                ];
+                res = yield (0, exec_1.exec)("jfrog", args);
+            }
+            if (core.getInput(Utils.BUILD_TYPE) == "promote-docker") {
+                args = [
+                    "rt",
+                    "docker-promote",
+                    "--copy",
+                    "--source-tag=" + core.getInput(Utils.DOCKER_IMAGE_TAG),
+                    core.getInput(Utils.DOCKER_IMAGE),
+                    core.getInput(Utils.PROMOTE_SOURCE_REPO),
+                    core.getInput(Utils.PROMOTE_TO_REPO),
                 ];
                 res = yield (0, exec_1.exec)("jfrog", args);
             }
@@ -172,19 +173,18 @@ Utils.USER_AGENT = "setup-jfrog-cli-github-action/" + __nccwpck_require__(306)/*
 Utils.BUILD_NAME = "build-name";
 Utils.BUILD_NUMBER = "build-number";
 Utils.BUILD_TYPE = "build-type";
-Utils.RESOLVE_SERVER_ID = "resolve-server-id";
-Utils.DEPLOY_SERVER_ID = "deploy-server-id";
-Utils.RESOLVE_SNAPSHOT_REPO = "resolve-snapshot-repository";
-Utils.DEPLOY_SNAPSHOT_REPO = "deploy-snapshot-Repository";
-Utils.RESOLVE_RELEASE_REPO = "resolve-releases-repository";
-Utils.DEPLOY_RELEASE_REPO = "deploy-releases-repository";
-Utils.JFROF_PROJECT = "jfrog-project";
+Utils.JFROG_PROJECT = "jfrog-project";
+Utils.DOCKER_IMAGE = "docker-image";
+Utils.DOCKER_IMAGE_TAG = "docker-image-tag";
+Utils.DOCKER_REPO = "docker-repo";
 Utils.BUILD_FAIL_ONSCAN = "build-fail-onscan";
+Utils.PROMOTE_TO_REPO = "promote-to-repo";
+Utils.PROMOTE_SOURCE_REPO = "promote-source-repo";
 
 
 /***/ }),
 
-/***/ 351:
+/***/ 350:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
@@ -210,7 +210,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.issue = exports.issueCommand = void 0;
 const os = __importStar(__nccwpck_require__(87));
-const utils_1 = __nccwpck_require__(278);
+const utils_1 = __nccwpck_require__(369);
 /**
  * Commands
  *
@@ -282,7 +282,7 @@ function escapeProperty(s) {
 
 /***/ }),
 
-/***/ 186:
+/***/ 24:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
@@ -316,9 +316,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.notice = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
-const command_1 = __nccwpck_require__(351);
-const file_command_1 = __nccwpck_require__(717);
-const utils_1 = __nccwpck_require__(278);
+const command_1 = __nccwpck_require__(350);
+const file_command_1 = __nccwpck_require__(466);
+const utils_1 = __nccwpck_require__(369);
 const os = __importStar(__nccwpck_require__(87));
 const path = __importStar(__nccwpck_require__(622));
 /**
@@ -593,7 +593,7 @@ exports.getState = getState;
 
 /***/ }),
 
-/***/ 717:
+/***/ 466:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
@@ -623,7 +623,7 @@ exports.issueCommand = void 0;
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const fs = __importStar(__nccwpck_require__(747));
 const os = __importStar(__nccwpck_require__(87));
-const utils_1 = __nccwpck_require__(278);
+const utils_1 = __nccwpck_require__(369);
 function issueCommand(command, message) {
     const filePath = process.env[`GITHUB_${command}`];
     if (!filePath) {
@@ -641,7 +641,7 @@ exports.issueCommand = issueCommand;
 
 /***/ }),
 
-/***/ 278:
+/***/ 369:
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -686,7 +686,7 @@ exports.toCommandProperties = toCommandProperties;
 
 /***/ }),
 
-/***/ 514:
+/***/ 423:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
@@ -721,7 +721,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getExecOutput = exports.exec = void 0;
 const string_decoder_1 = __nccwpck_require__(304);
-const tr = __importStar(__nccwpck_require__(159));
+const tr = __importStar(__nccwpck_require__(216));
 /**
  * Exec a command.
  * Output will be streamed to the live console.
@@ -795,7 +795,7 @@ exports.getExecOutput = getExecOutput;
 
 /***/ }),
 
-/***/ 159:
+/***/ 216:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
@@ -833,8 +833,8 @@ const os = __importStar(__nccwpck_require__(87));
 const events = __importStar(__nccwpck_require__(614));
 const child = __importStar(__nccwpck_require__(129));
 const path = __importStar(__nccwpck_require__(622));
-const io = __importStar(__nccwpck_require__(436));
-const ioUtil = __importStar(__nccwpck_require__(962));
+const io = __importStar(__nccwpck_require__(202));
+const ioUtil = __importStar(__nccwpck_require__(120));
 const timers_1 = __nccwpck_require__(213);
 /* eslint-disable @typescript-eslint/unbound-method */
 const IS_WINDOWS = process.platform === 'win32';
@@ -1419,7 +1419,7 @@ class ExecState extends events.EventEmitter {
 
 /***/ }),
 
-/***/ 962:
+/***/ 120:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
@@ -1602,7 +1602,7 @@ exports.getCmdPath = getCmdPath;
 
 /***/ }),
 
-/***/ 436:
+/***/ 202:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
@@ -1640,7 +1640,7 @@ const assert_1 = __nccwpck_require__(357);
 const childProcess = __importStar(__nccwpck_require__(129));
 const path = __importStar(__nccwpck_require__(622));
 const util_1 = __nccwpck_require__(669);
-const ioUtil = __importStar(__nccwpck_require__(962));
+const ioUtil = __importStar(__nccwpck_require__(120));
 const exec = util_1.promisify(childProcess.exec);
 const execFile = util_1.promisify(childProcess.execFile);
 /**
@@ -1949,13 +1949,6 @@ function copyFile(srcFile, destFile, force) {
 
 /***/ }),
 
-/***/ 306:
-/***/ ((module) => {
-
-module.exports = {"i8":"1.1.0"};
-
-/***/ }),
-
 /***/ 357:
 /***/ ((module) => {
 
@@ -2061,7 +2054,7 @@ module.exports = require("util");
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __nccwpck_require__(109);
+/******/ 	var __webpack_exports__ = __nccwpck_require__(739);
 /******/ 	module.exports = __webpack_exports__;
 /******/ 	
 /******/ })()

@@ -7,18 +7,13 @@ export class Utils {
   public static readonly BUILD_NAME: string = "build-name";
   public static readonly BUILD_NUMBER: string = "build-number";
   public static readonly BUILD_TYPE: string = "build-type";
-  public static readonly RESOLVE_SERVER_ID: string = "resolve-server-id";
-  public static readonly DEPLOY_SERVER_ID: string = "deploy-server-id";
-  public static readonly RESOLVE_SNAPSHOT_REPO: string =
-    "resolve-snapshot-repository";
-  public static readonly DEPLOY_SNAPSHOT_REPO: string =
-    "deploy-snapshot-Repository";
-  public static readonly RESOLVE_RELEASE_REPO: string =
-    "resolve-releases-repository";
-  public static readonly DEPLOY_RELEASE_REPO: string =
-    "deploy-releases-repository";
-  public static readonly JFROF_PROJECT: string = "jfrog-project";
+  public static readonly JFROG_PROJECT: string = "jfrog-project";
+  public static readonly DOCKER_IMAGE: string = "docker-image";
+  public static readonly DOCKER_IMAGE_TAG: string = "docker-image-tag";
+  public static readonly DOCKER_REPO: string = "docker-repo";
   public static readonly BUILD_FAIL_ONSCAN: string = "build-fail-onscan";
+  public static readonly PROMOTE_TO_REPO: string = "promote-to-repo";
+  public static readonly PROMOTE_SOURCE_REPO: string = "promote-source-repo";
 
   public static setCliEnv() {
     core.exportVariable(
@@ -34,7 +29,7 @@ export class Utils {
     if (buildNumberEnv) {
       core.exportVariable("JFROG_CLI_BUILD_NUMBER", buildNumberEnv);
     }
-    let buildProjectEnv: string = core.getInput(Utils.JFROF_PROJECT);
+    let buildProjectEnv: string = core.getInput(Utils.JFROG_PROJECT);
     if (buildProjectEnv) {
       core.exportVariable("JFROG_CLI_BUILD_PROJECT", buildProjectEnv);
     }
@@ -52,39 +47,21 @@ export class Utils {
   public static async run() {
     let res: number = 0;
     let args: string[] = [];
-    if (core.getInput(Utils.BUILD_TYPE) == "maven-build") {
-      args = [
-        "rt",
-        "mvnc",
-        "--server-id-resolve=" + core.getInput(Utils.RESOLVE_SERVER_ID),
-        "--repo-resolve-releases=" + core.getInput(Utils.RESOLVE_RELEASE_REPO),
-        "--repo-resolve-snapshots=" +
-          core.getInput(Utils.RESOLVE_SNAPSHOT_REPO),
-      ];
-      res = await exec("jfrog", args);
-      args = ["rt", "mvn", "clean", "install"];
-      res = await exec("jfrog", args);
-    }
-    if (core.getInput(Utils.BUILD_TYPE) == "maven-deploy") {
-      args = [
-        "rt",
-        "mvnc",
-        "--server-id-resolve=" + core.getInput(Utils.RESOLVE_SERVER_ID),
-        "--server-id-deploy=" + core.getInput(Utils.DEPLOY_SERVER_ID),
-        "--repo-resolve-releases=" + core.getInput(Utils.RESOLVE_RELEASE_REPO),
-        "--repo-resolve-snapshots=" +
-          core.getInput(Utils.RESOLVE_SNAPSHOT_REPO),
-        "--repo-deploy-releases=" + core.getInput(Utils.DEPLOY_RELEASE_REPO),
-        "--repo-deploy-snapshots=" + core.getInput(Utils.DEPLOY_SNAPSHOT_REPO),
-      ];
-      res = await exec("jfrog", args);
-      args = ["rt", "mvn", "clean", "install"];
-      res = await exec("jfrog", args);
-
+    if (core.getInput(Utils.BUILD_TYPE) == "docker-deploy") {
       args = ["rt", "build-collect-env"];
       res = await exec("jfrog", args);
 
       args = ["rt", "build-add-git"];
+      res = await exec("jfrog", args);
+
+      args = [
+        "rt",
+        "docker-push",
+        core.getInput(Utils.DOCKER_IMAGE) +
+          ":" +
+          core.getInput(Utils.DOCKER_IMAGE_TAG),
+        core.getInput(Utils.DOCKER_REPO),
+      ];
       res = await exec("jfrog", args);
 
       args = ["rt", "build-publish"];
@@ -94,6 +71,18 @@ export class Utils {
         "rt",
         "build-scan",
         "--fail=" + core.getInput(Utils.BUILD_FAIL_ONSCAN),
+      ];
+      res = await exec("jfrog", args);
+    }
+    if (core.getInput(Utils.BUILD_TYPE) == "promote-docker") {
+      args = [
+        "rt",
+        "docker-promote",
+        "--copy",
+        "--source-tag=" + core.getInput(Utils.DOCKER_IMAGE_TAG),
+        core.getInput(Utils.DOCKER_IMAGE),
+        core.getInput(Utils.PROMOTE_SOURCE_REPO),
+        core.getInput(Utils.PROMOTE_TO_REPO),
       ];
       res = await exec("jfrog", args);
     }
