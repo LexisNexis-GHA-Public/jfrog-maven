@@ -28,7 +28,7 @@
     "@actions/core": "^1.4.0",
     "@actions/exec": "^1.1.0",
     "@actions/tool-cache": "^1.7.1",
-    "@types/fs-extra": "^9.0.12",
+    "@types/fs-extra": "^9.0.13",
     "@types/semver": "^7.3.8",
     "fs-extra": "^10.0.0"
   },
