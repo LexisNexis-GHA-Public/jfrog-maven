@@ -1,11 +1,5 @@
 import * as core from "@actions/core";
 import { exec } from "@actions/exec";
-import * as toolCache from "@actions/tool-cache";
-import * as fs from "fs-extra";
-import * as os from "os";
-import * as path from "path";
-import { util } from "prettier";
-import * as semver from "semver";
 
 export class Utils {
   public static readonly USER_AGENT: string =
@@ -23,16 +17,8 @@ export class Utils {
     "resolve-releases-repository";
   public static readonly DEPLOY_RELEASE_REPO: string =
     "deploy-releases-repository";
-  public static readonly JFROG_PROJECT: string = "jfrog-project";
-  public static readonly DOCKER_IMAGE: string = "docker-image";
-  public static readonly DOCKER_IMAGE_TAG: string = "docker-image-tag";
-  public static readonly DOCKER_REPO: string = "docker-repo";
-  public static readonly HELM_REPO: string = "helm-repo";
+  public static readonly JFROF_PROJECT: string = "jfrog-project";
   public static readonly BUILD_FAIL_ONSCAN: string = "build-fail-onscan";
-  public static readonly PROMOTE_TO_REPO: string = "promote-to-repo";
-  public static readonly PROMOTE_BUILD_NAME: string = "promote-build-name";
-  public static readonly PROMOTE_BUILD_NUMBER: string = "promote-build-number";
-  public static readonly PROMOTE_SOURCE_REPO: string = "promote-source-repo";
 
   public static setCliEnv() {
     core.exportVariable(
@@ -48,7 +34,7 @@ export class Utils {
     if (buildNumberEnv) {
       core.exportVariable("JFROG_CLI_BUILD_NUMBER", buildNumberEnv);
     }
-    let buildProjectEnv: string = core.getInput(Utils.JFROG_PROJECT);
+    let buildProjectEnv: string = core.getInput(Utils.JFROF_PROJECT);
     if (buildProjectEnv) {
       core.exportVariable("JFROG_CLI_BUILD_PROJECT", buildProjectEnv);
     }
@@ -95,79 +81,19 @@ export class Utils {
       args = ["rt", "mvn", "clean", "install"];
       res = await exec("jfrog", args);
 
-      args = ["rt", "bce"];
+      args = ["rt", "build-collect-env"];
       res = await exec("jfrog", args);
 
-      args = ["rt", "bag"];
+      args = ["rt", "build-add-git"];
       res = await exec("jfrog", args);
 
-      args = ["rt", "bp"];
-      res = await exec("jfrog", args);
-
-      args = ["rt", "bs", "--fail=" + core.getInput(Utils.BUILD_FAIL_ONSCAN)];
-      res = await exec("jfrog", args);
-    }
-    if (core.getInput(Utils.BUILD_TYPE) == "docker-deploy") {
-      args = ["rt", "bce"];
-      res = await exec("jfrog", args);
-
-      args = ["rt", "bag"];
+      args = ["rt", "build-publish"];
       res = await exec("jfrog", args);
 
       args = [
         "rt",
-        "dp",
-        core.getInput(Utils.DOCKER_IMAGE) +
-          ":" +
-          core.getInput(Utils.DOCKER_IMAGE_TAG),
-        core.getInput(Utils.DOCKER_REPO),
-      ];
-      res = await exec("jfrog", args);
-
-      args = ["rt", "bp"];
-      res = await exec("jfrog", args);
-
-      args = ["rt", "bs", "--fail=" + core.getInput(Utils.BUILD_FAIL_ONSCAN)];
-      res = await exec("jfrog", args);
-    }
-    if (core.getInput(Utils.BUILD_TYPE) == "helm-deploy") {
-      args = ["rt", "bce"];
-      res = await exec("jfrog", args);
-
-      args = ["rt", "bag"];
-      res = await exec("jfrog", args);
-
-      args = ["rt", "u", "(*).tgz", core.getInput(Utils.HELM_REPO)];
-      res = await exec("jfrog", args);
-
-      args = ["rt", "bp"];
-      res = await exec("jfrog", args);
-
-      args = ["rt", "bs", "--fail=" + core.getInput(Utils.BUILD_FAIL_ONSCAN)];
-      res = await exec("jfrog", args);
-    }
-    if (core.getInput(Utils.BUILD_TYPE) == "promote-build") {
-      args = [
-        "rt",
-        "bpr",
-        core.getInput(Utils.PROMOTE_BUILD_NAME),
-        core.getInput(Utils.PROMOTE_BUILD_NUMBER),
-        core.getInput(Utils.PROMOTE_TO_REPO),
-        "--project=" + core.getInput(Utils.JFROG_PROJECT),
-        "--source-repo=" + core.getInput(Utils.PROMOTE_SOURCE_REPO),
-        "--copy=true",
-      ];
-      res = await exec("jfrog", args);
-    }
-    if (core.getInput(Utils.BUILD_TYPE) == "promote-docker") {
-      args = [
-        "rt",
-        "dpr",
-        "--copy",
-        "--source-tag=" + core.getInput(Utils.DOCKER_IMAGE_TAG),
-        core.getInput(Utils.DOCKER_IMAGE),
-        core.getInput(Utils.PROMOTE_SOURCE_REPO),
-        core.getInput(Utils.PROMOTE_TO_REPO),
+        "build-scan",
+        "--fail=" + core.getInput(Utils.BUILD_FAIL_ONSCAN),
       ];
       res = await exec("jfrog", args);
     }

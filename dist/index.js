@@ -148,68 +148,16 @@ class Utils {
                 res = yield (0, exec_1.exec)("jfrog", args);
                 args = ["rt", "mvn", "clean", "install"];
                 res = yield (0, exec_1.exec)("jfrog", args);
-                args = ["rt", "bce"];
+                args = ["rt", "build-collect-env"];
                 res = yield (0, exec_1.exec)("jfrog", args);
-                args = ["rt", "bag"];
+                args = ["rt", "build-add-git"];
                 res = yield (0, exec_1.exec)("jfrog", args);
-                args = ["rt", "bp"];
-                res = yield (0, exec_1.exec)("jfrog", args);
-                args = ["rt", "bs", "--fail=" + core.getInput(Utils.BUILD_FAIL_ONSCAN)];
-                res = yield (0, exec_1.exec)("jfrog", args);
-            }
-            if (core.getInput(Utils.BUILD_TYPE) == "docker-deploy") {
-                args = ["rt", "bce"];
-                res = yield (0, exec_1.exec)("jfrog", args);
-                args = ["rt", "bag"];
+                args = ["rt", "build-publish"];
                 res = yield (0, exec_1.exec)("jfrog", args);
                 args = [
                     "rt",
-                    "dp",
-                    core.getInput(Utils.DOCKER_IMAGE) +
-                        ":" +
-                        core.getInput(Utils.DOCKER_IMAGE_TAG),
-                    core.getInput(Utils.DOCKER_REPO),
-                ];
-                res = yield (0, exec_1.exec)("jfrog", args);
-                args = ["rt", "bp"];
-                res = yield (0, exec_1.exec)("jfrog", args);
-                args = ["rt", "bs", "--fail=" + core.getInput(Utils.BUILD_FAIL_ONSCAN)];
-                res = yield (0, exec_1.exec)("jfrog", args);
-            }
-            if (core.getInput(Utils.BUILD_TYPE) == "helm-deploy") {
-                args = ["rt", "bce"];
-                res = yield (0, exec_1.exec)("jfrog", args);
-                args = ["rt", "bag"];
-                res = yield (0, exec_1.exec)("jfrog", args);
-                args = ["rt", "u", "(*).tgz", core.getInput(Utils.HELM_REPO)];
-                res = yield (0, exec_1.exec)("jfrog", args);
-                args = ["rt", "bp"];
-                res = yield (0, exec_1.exec)("jfrog", args);
-                args = ["rt", "bs", "--fail=" + core.getInput(Utils.BUILD_FAIL_ONSCAN)];
-                res = yield (0, exec_1.exec)("jfrog", args);
-            }
-            if (core.getInput(Utils.BUILD_TYPE) == "promote-build") {
-                args = [
-                    "rt",
-                    "bpr",
-                    core.getInput(Utils.PROMOTE_BUILD_NAME),
-                    core.getInput(Utils.PROMOTE_BUILD_NUMBER),
-                    core.getInput(Utils.PROMOTE_TO_REPO),
-                    "--project=" + core.getInput(Utils.JFROF_PROJECT),
-                    "--source-repo=" + core.getInput(Utils.PROMOTE_SOURCE_REPO),
-                    "--copy=true",
-                ];
-                res = yield (0, exec_1.exec)("jfrog", args);
-            }
-            if (core.getInput(Utils.BUILD_TYPE) == "promote-docker") {
-                args = [
-                    "rt",
-                    "dpr",
-                    "--copy",
-                    "--source-tag=" + core.getInput(Utils.DOCKER_IMAGE_TAG),
-                    core.getInput(Utils.DOCKER_IMAGE),
-                    core.getInput(Utils.PROMOTE_SOURCE_REPO),
-                    core.getInput(Utils.PROMOTE_TO_REPO),
+                    "build-scan",
+                    "--fail=" + core.getInput(Utils.BUILD_FAIL_ONSCAN),
                 ];
                 res = yield (0, exec_1.exec)("jfrog", args);
             }
@@ -231,15 +179,7 @@ Utils.DEPLOY_SNAPSHOT_REPO = "deploy-snapshot-Repository";
 Utils.RESOLVE_RELEASE_REPO = "resolve-releases-repository";
 Utils.DEPLOY_RELEASE_REPO = "deploy-releases-repository";
 Utils.JFROF_PROJECT = "jfrog-project";
-Utils.DOCKER_IMAGE = "docker-image";
-Utils.DOCKER_IMAGE_TAG = "docker-image-tag";
-Utils.DOCKER_REPO = "docker-repo";
-Utils.HELM_REPO = "helm-repo";
 Utils.BUILD_FAIL_ONSCAN = "build-fail-onscan";
-Utils.PROMOTE_TO_REPO = "promote-to-repo";
-Utils.PROMOTE_BUILD_NAME = "promote-build-name";
-Utils.PROMOTE_BUILD_NUMBER = "promote-build-number";
-Utils.PROMOTE_SOURCE_REPO = "promote-source-repo";
 
 
 /***/ }),
