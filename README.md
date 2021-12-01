@@ -7,7 +7,7 @@ Follow the below steps to create the JF_ARTIFACTORY secret and save as part GitH
   3.	Export the details of the Artifactory server you configured, using the server ID you chose. Do this by running jfrog c export <SERVER ID>.
   4.	Copy the generated token to the clipboard and save it as a secret on GitHub.
   
-  ![jfrog](https://user-images.githubusercontent.com/31221465/144163832-61656f8c-83bb-4ea7-8825-b37b77173040.png)
+  ![jfrog](https://user-images.githubusercontent.com/31221465/144165820-132cb2ea-8dbd-44b5-af8f-e9b1fcd6750e.png)
 
 Once the secret is saved, we can use the jfrogcli action as below.
   
@@ -37,7 +37,7 @@ Action supports following
 with input build-type as maven-build, action creates jfrog maven config and builds the maven artifacts, but artifacts are not published to Jfrog.
 Usage:
 
- ![image](https://user-images.githubusercontent.com/31221465/140873613-14dce430-c53a-4c5b-affc-6843ac91f8ca.png)
+ <img width="692" alt="Screen Shot 2021-12-01 at 8 45 55 AM" src="https://user-images.githubusercontent.com/31221465/144165687-593ba9e1-609d-4dfe-8a41-2b7ffecb8d72.png">
 
 
 
@@ -46,4 +46,4 @@ Usage:
 with input build-type as maven-deploy, action creates jfrog maven config and builds the maven artifacts, once the maven artifacts are built, collects environment variables for the build, publishes artifacts along with build info to Jfrog along with Jfrog xray scan is triggered.
 Usage
 
- ![image](https://user-images.githubusercontent.com/31221465/140873648-b4d8e61e-2309-46ef-9053-3ebbfa03f9fe.png)
+ <img width="664" alt="Screen Shot 2021-12-01 at 8 44 06 AM" src="https://user-images.githubusercontent.com/31221465/144165587-8711b14e-19ba-41de-bef3-92e79b8641e2.png">
