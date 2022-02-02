@@ -127,6 +127,7 @@ class Utils {
         return __awaiter(this, void 0, void 0, function* () {
             let res = 0;
             let args = [];
+            console.log("maven options === " + core.getInput(Utils.MAVEN_OPTIONS));
             if (core.getInput(Utils.BUILD_TYPE) == "maven-build") {
                 args = [
                     "rt",
@@ -137,7 +138,44 @@ class Utils {
                         core.getInput(Utils.RESOLVE_SNAPSHOT_REPO),
                 ];
                 res = yield (0, exec_1.exec)("jfrog", args);
-                args = ["rt", "mvn", "clean", "install"];
+                if (typeof core.getInput(Utils.MAVEN_OPTIONS) != "undefined" &&
+                    core.getInput(Utils.MAVEN_OPTIONS)) {
+                    args = [
+                        "rt",
+                        "mvn",
+                        core.getInput(Utils.MAVEN_OPTIONS),
+                        "clean",
+                        "install",
+                    ];
+                }
+                else {
+                    args = ["rt", "mvn", "clean", "install"];
+                }
+                res = yield (0, exec_1.exec)("jfrog", args);
+            }
+            if (core.getInput(Utils.BUILD_TYPE) == "maven-test") {
+                args = [
+                    "rt",
+                    "mvnc",
+                    "--server-id-resolve=" + core.getInput(Utils.RESOLVE_SERVER_ID),
+                    "--repo-resolve-releases=" + core.getInput(Utils.RESOLVE_RELEASE_REPO),
+                    "--repo-resolve-snapshots=" +
+                        core.getInput(Utils.RESOLVE_SNAPSHOT_REPO),
+                ];
+                res = yield (0, exec_1.exec)("jfrog", args);
+                if (typeof core.getInput(Utils.MAVEN_OPTIONS) != "undefined" &&
+                    core.getInput(Utils.MAVEN_OPTIONS)) {
+                    args = [
+                        "rt",
+                        "mvn",
+                        core.getInput(Utils.MAVEN_OPTIONS),
+                        "clean",
+                        "test",
+                    ];
+                }
+                else {
+                    args = ["rt", "mvn", "clean", "test"];
+                }
                 res = yield (0, exec_1.exec)("jfrog", args);
             }
             if (core.getInput(Utils.BUILD_TYPE) == "maven-deploy") {
@@ -153,7 +191,19 @@ class Utils {
                     "--repo-deploy-snapshots=" + core.getInput(Utils.DEPLOY_SNAPSHOT_REPO),
                 ];
                 res = yield (0, exec_1.exec)("jfrog", args);
-                args = ["rt", "mvn", "clean", "install"];
+                if (typeof core.getInput(Utils.MAVEN_OPTIONS) != "undefined" &&
+                    core.getInput(Utils.MAVEN_OPTIONS)) {
+                    args = [
+                        "rt",
+                        "mvn",
+                        core.getInput(Utils.MAVEN_OPTIONS),
+                        "clean",
+                        "install",
+                    ];
+                }
+                else {
+                    args = ["rt", "mvn", "clean", "install"];
+                }
                 res = yield (0, exec_1.exec)("jfrog", args);
                 args = ["rt", "build-collect-env"];
                 res = yield (0, exec_1.exec)("jfrog", args);
@@ -187,6 +237,7 @@ Utils.RESOLVE_RELEASE_REPO = "resolve-releases-repository";
 Utils.DEPLOY_RELEASE_REPO = "deploy-releases-repository";
 Utils.JFROF_PROJECT = "jfrog-project";
 Utils.BUILD_FAIL_ONSCAN = "build-fail-onscan";
+Utils.MAVEN_OPTIONS = "maven-options";
 
 
 /***/ }),
