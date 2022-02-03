@@ -1,6 +1,6 @@
 {
-  "name": "jfrog-action",
-  "version": "1.0.0",
+  "name": "jfrog-maven",
+  "version": "1.0.2",
   "private": true,
   "description": "TypeScript jfrog action",
   "main": "lib/main.js",

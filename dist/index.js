@@ -5,7 +5,7 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /***/ 306:
 /***/ ((module) => {
 
-module.exports = {"i8":"1.0.0"};
+module.exports = {"i8":"1.0.2"};
 
 /***/ }),
 
@@ -138,18 +138,11 @@ class Utils {
                         core.getInput(Utils.RESOLVE_SNAPSHOT_REPO),
                 ];
                 res = yield (0, exec_1.exec)("jfrog", args);
-                if (typeof core.getInput(Utils.MAVEN_OPTIONS) != "undefined" &&
-                    core.getInput(Utils.MAVEN_OPTIONS)) {
-                    args = [
-                        "rt",
-                        "mvn",
-                        core.getInput(Utils.MAVEN_OPTIONS),
-                        "clean",
-                        "install",
-                    ];
-                }
-                else {
-                    args = ["rt", "mvn", "clean", "install"];
+                args = ["rt", "mvn", "clean", "install"];
+                let build_args_str = core.getInput(Utils.MAVEN_OPTIONS);
+                if (build_args_str != "" || build_args_str.length > 0) {
+                    let build_args = build_args_str.split("\n");
+                    args = args.concat(build_args);
                 }
                 res = yield (0, exec_1.exec)("jfrog", args);
             }
@@ -163,18 +156,11 @@ class Utils {
                         core.getInput(Utils.RESOLVE_SNAPSHOT_REPO),
                 ];
                 res = yield (0, exec_1.exec)("jfrog", args);
-                if (typeof core.getInput(Utils.MAVEN_OPTIONS) != "undefined" &&
-                    core.getInput(Utils.MAVEN_OPTIONS)) {
-                    args = [
-                        "rt",
-                        "mvn",
-                        core.getInput(Utils.MAVEN_OPTIONS),
-                        "clean",
-                        "test",
-                    ];
-                }
-                else {
-                    args = ["rt", "mvn", "clean", "test"];
+                args = ["rt", "mvn", "clean", "test"];
+                let build_args_str = core.getInput(Utils.MAVEN_OPTIONS);
+                if (build_args_str != "" || build_args_str.length > 0) {
+                    let build_args = build_args_str.split("\n");
+                    args = args.concat(build_args);
                 }
                 res = yield (0, exec_1.exec)("jfrog", args);
             }
@@ -191,18 +177,11 @@ class Utils {
                     "--repo-deploy-snapshots=" + core.getInput(Utils.DEPLOY_SNAPSHOT_REPO),
                 ];
                 res = yield (0, exec_1.exec)("jfrog", args);
-                if (typeof core.getInput(Utils.MAVEN_OPTIONS) != "undefined" &&
-                    core.getInput(Utils.MAVEN_OPTIONS)) {
-                    args = [
-                        "rt",
-                        "mvn",
-                        core.getInput(Utils.MAVEN_OPTIONS),
-                        "clean",
-                        "install",
-                    ];
-                }
-                else {
-                    args = ["rt", "mvn", "clean", "install"];
+                args = ["rt", "mvn", "clean", "install"];
+                let build_args_str = core.getInput(Utils.MAVEN_OPTIONS);
+                if (build_args_str != "" || build_args_str.length > 0) {
+                    let build_args = build_args_str.split("\n");
+                    args = args.concat(build_args);
                 }
                 res = yield (0, exec_1.exec)("jfrog", args);
                 args = ["rt", "build-collect-env"];
