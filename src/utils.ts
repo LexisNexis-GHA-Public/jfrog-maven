@@ -53,7 +53,6 @@ export class Utils {
   public static async run() {
     let res: number = 0;
     let args: string[] = [];
-    console.log("maven options === " + core.getInput(Utils.MAVEN_OPTIONS));
     if (core.getInput(Utils.BUILD_TYPE) == "maven-build") {
       args = [
         "rt",

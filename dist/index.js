@@ -127,7 +127,6 @@ class Utils {
         return __awaiter(this, void 0, void 0, function* () {
             let res = 0;
             let args = [];
-            console.log("maven options === " + core.getInput(Utils.MAVEN_OPTIONS));
             if (core.getInput(Utils.BUILD_TYPE) == "maven-build") {
                 args = [
                     "rt",
