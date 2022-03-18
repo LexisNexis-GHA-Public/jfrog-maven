@@ -38,6 +38,9 @@ inputs:
   build-fail-onscan:
     description: "action to be taken"
     required: false
+  maven-options:
+    description: "action to be taken"
+    required: false
 
 runs:
   using: "node12"
